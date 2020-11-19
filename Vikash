@@ -1,0 +1,51 @@
+https://www.artificial-solutions.com/chatbots :- For basic understanding of chatbot and current business needs
+
+We will explore about one of the unique but the most important topic of the Rasa chatbot which makes it multi-tasking to handle multiple conversations at a time. So what we are discussing is known as the Session ID or the Conversation ID, which is a unique identification ID for each user which will help the rasa chatbot to recognize that who is texting the bot, what reply it has to give to the which user, etc. That’s all just because of this single but unique identification Id know as a session ID or conversation ID.
+
+Now, let’s see how to generate the conversation for each unique user. Let’s get started now.
+Generating Session ID
+To generate or get the session ID for each conversation, we will create a short conversation which is as shown here,
+User: May i know what is my conversation id
+Bot: The conversation id is 5d24a6dbf2684897aed420465deffda1
+So, this is a short conversation that we will have with our bot and our bot will tell us the unique session ID in return. Now let’s create this conversation into the rasa project and let’s understand how to get the unique session ID. For that make the changes into the existing Rasa project in such a way,
+
+nlu.md
+## intent:ask_id
+- tell me the conversation id
+- what's my conversation id
+- tell me session id
+- may i know what is my session id
+- What is the ID of this conversation?
+
+Here, we have create a new intent which is a user input to ask for the conversation ID.
+
+
+actions.py
+
+class ActionSessionId(Action):
+    def name(self) -> Text:
+        return "action_session_id"
+
+    async def run(
+    self, dispatcher, tracker: Tracker, domain: Dict[Text, Any]
+    ) -> List[Dict[Text, Any]]:
+
+        conversation_id=tracker.sender_id
+        dispatcher.utter_message("The conversation id is {}".format(conversation_id))
+        return []
+
+
+In the actions.py script, we’ve added a new action class where I’ve fetched the session ID using the tracker. Rasa itself takes care of this session ID, so we don’t have to generate it manually. That is the reason which makes it multi-tasking more user friendly.
+conversation_id=tracker.sender_id
+dispatcher.utter_message("The conversation id is {}".format(conversation_id))
+
+This code is used to get the unique session ID and to display it to the user in return with session ID.
+domain.yml
+
+intents:
+- ask_id:
+triggers: action_session_id
+actions:
+- action_session_id
+Here, instead of calling the stories, we just triggered the custom action directly with respect to the intent that we created to ask for the session/conversation ID.
+
